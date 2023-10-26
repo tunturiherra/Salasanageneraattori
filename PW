@@ -11,7 +11,7 @@ def generate_password(length, use_special_characters):
     password = ''.join(secrets.choice(characters) for _ in range(length))
     return password
 
-# Tervehditään käyttäjää
+# Tervehditään käyttäjää ja odotetaan hetki
 print("Tervehdys! Olen salasanageneraattori, ja voin auttaa sinua luomaan uusia salasanoja.")
 time.sleep(2)
 
