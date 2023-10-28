@@ -1,7 +1,11 @@
+# Tämä on ensimmäinen Github-versio. Pyrin tähän päivittelemään koodia.
+# UUTTA: Virheviestit muunnetaan punaiseksi.
+
 import string
 import secrets
 import clipboard
 import time
+from colorama import Fore, Back, Style
 
 # luodaan määritys salasanalle
 def generate_password(length, use_special_characters):
@@ -21,7 +25,9 @@ while True:
     try:
         password_length = int(input("Toiveesi salasanan pituudelle? Pienin hyväksytty luku on 8!\n"))
         if password_length < 8:
-            print("Salasana on liian lyhyt! Vahvassa salasanassa on vähintään 8 merkkiä.")
+            # Virheviesti ja muutos punaiseksi:
+            print(Fore.RED + "Salasana on liian lyhyt! Vahvassa salasanassa on vähintään 8 merkkiä.")
+            print(Style.RESET_ALL)
             continue
 
         # käyttäjän ei ole pakko käyttää erikoismerkkejä, mutta on suositeltavaa. Joka tapauksessa
@@ -44,9 +50,10 @@ while True:
 
     # Jos käyttäjä yrittää alussa syöttää kirjaimia kun pyydetään numeroita, niin ilmoitetaan siitä.
     except ValueError:
-        print("Et syöttänyt numeroa! Anna jokin luku, joka on suurempi tai yhtä suuri kuin 8!")
+        # Virheviesti ja muutos punaiseksi:
+        print(Fore.RED + "Et syöttänyt numeroa! Anna jokin luku, joka on suurempi tai yhtä suuri kuin 8!")
+        print(Style.RESET_ALL)
         answer = input('Aloitetaanko alusta? (k/e):').lower()
         if answer == 'e':
             print("Näkemiin!")
             break
-
