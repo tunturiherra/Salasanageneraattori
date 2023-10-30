@@ -7,6 +7,9 @@ import clipboard
 import time
 from colorama import Fore, Back, Style
 
+# tämä merkintä on maanantailta 30.10.2023
+#
+
 # luodaan määritys salasanalle
 def generate_password(length, use_special_characters):
     characters = string.ascii_letters + string.digits
