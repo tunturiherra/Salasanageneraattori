@@ -1,3 +1,5 @@
+# Tämä ohjelma generoi vahvoja satunnaisia salasanoja.
+
 # Tämä on ensimmäinen Github-versio. Pyrin tähän päivittelemään koodia.
 # UUTTA: Virheviestit muunnetaan punaiseksi.
 
@@ -6,9 +8,6 @@ import secrets
 import clipboard
 import time
 from colorama import Fore, Back, Style
-
-# tämä merkintä on maanantailta 30.10.2023
-#
 
 # luodaan määritys salasanalle
 def generate_password(length, use_special_characters):
@@ -53,9 +52,11 @@ while True:
 
     # Jos käyttäjä yrittää alussa syöttää kirjaimia kun pyydetään numeroita, niin ilmoitetaan siitä.
     except ValueError:
+
         # Virheviesti ja muutos punaiseksi:
         print(Fore.RED + "Et syöttänyt numeroa! Anna jokin luku, joka on suurempi tai yhtä suuri kuin 8!")
         print(Style.RESET_ALL)
+
         answer = input('Aloitetaanko alusta? (k/e):').lower()
         if answer == 'e':
             print("Näkemiin!")
