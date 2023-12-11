@@ -37,12 +37,13 @@ while True:
         use_special_characters = input("Haluatko käyttää erikoismerkkejä salasanassa? Tämä on suositeltavaa, ja"
                                        " nostaa tietoturvatasoa! (k/e): ").lower() == 'k'
 
-        # Tässä muodostetaan salasana huomioiden kuitenkin kjäyttäjän valinta erikoismerkkien suhteen
+        # Tässä muodostetaan salasana huomioiden kuitenkin käyttäjän valinta erikoismerkkien suhteen
         password = generate_password(password_length, use_special_characters)
         print("Salasana luotu: {}".format(password))
+        # automaattinen kopiointi leikepöydälle
         clipboard.copy(password)
 
-        # Salasana luotu, ohjelman kuuluu kopioida teksti leikepöydälle liittämistä varten.
+        # Salasana luotu, ja valmis käytettäväksi
         answer = input('Salasana kopioitu leikepöydälle. Paina Ctrl + V liittääksesi sen haluamaasi paikkaan. Lopetetaanko ohjelma? (k/e):').lower()
 
         # tässä vaiheessa kaiken pitäisi olla OK, joten kysytään lopetetaanko ohjelma.
