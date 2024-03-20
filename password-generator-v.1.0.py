@@ -1,15 +1,9 @@
-# Tämä ohjelma generoi vahvoja satunnaisia salasanoja.
-
-# Tämä on ensimmäinen Github-versio. Pyrin tähän päivittelemään koodia.
-# UUTTA: Virheviestit muunnetaan punaiseksi.
-
 import string
 import secrets
 import clipboard
 import time
 from colorama import Fore, Style
 
-# luodaan määritys salasanalle
 def generate_password(length, use_special_characters):
     characters = string.ascii_letters + string.digits
     if use_special_characters:
@@ -34,8 +28,20 @@ while True:
 
         # käyttäjän ei ole pakko käyttää erikoismerkkejä, mutta on suositeltavaa. Joka tapauksessa
         # tarjotaan mahdollisuutta käyttää tai olla käyttämättä.
-        use_special_characters = input("Haluatko käyttää erikoismerkkejä salasanassa? Tämä on suositeltavaa, ja"
-                                       " nostaa tietoturvatasoa! (k/e): ").lower() == 'k'
+        while True:
+            use_special_characters_response = input("Haluatko käyttää erikoismerkkejä salasanassa? Tämä on suositeltavaa, "
+                                               "ja nostaa tietoturvatasoa! (k/e): ")
+            if use_special_characters_response in ('k', 'e'):
+                break
+            else:
+                print(Fore.RED + "Vastaa joko k tai e!")
+                print(Style.RESET_ALL)
+                continue
+
+        if use_special_characters_response == 'k':
+            use_special_characters = True
+        elif use_special_characters_response == 'e':
+            use_special_characters = False
 
         # Tässä muodostetaan salasana huomioiden kuitenkin käyttäjän valinta erikoismerkkien suhteen
         password = generate_password(password_length, use_special_characters)
@@ -44,7 +50,8 @@ while True:
         clipboard.copy(password)
 
         # Salasana luotu, ja valmis käytettäväksi
-        answer = input('Salasana kopioitu leikepöydälle. Paina Ctrl + V liittääksesi sen haluamaasi paikkaan. Lopetetaanko ohjelma? (k/e):').lower()
+        answer = input('Salasana kopioitu leikepöydälle. Paina Ctrl + V liittääksesi sen '
+                       'haluamaasi paikkaan. Lopetetaanko ohjelma? (k/e):').lower()
 
         # tässä vaiheessa kaiken pitäisi olla OK, joten kysytään lopetetaanko ohjelma.
         if answer == 'k':
@@ -54,7 +61,6 @@ while True:
             continue
         else:
             print("Vastaa joko k tai e!")
-
 
     # Jos käyttäjä yrittää alussa syöttää kirjaimia kun pyydetään numeroita, niin ilmoitetaan siitä.
     except ValueError:
