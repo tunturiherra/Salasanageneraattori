@@ -7,7 +7,7 @@ import string
 import secrets
 import clipboard
 import time
-from colorama import Fore, Back, Style
+from colorama import Fore, Style
 
 # luodaan määritys salasanalle
 def generate_password(length, use_special_characters):
