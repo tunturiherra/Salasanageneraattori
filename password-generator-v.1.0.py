@@ -50,6 +50,11 @@ while True:
         if answer == 'k':
             print("Näkemiin!")
             break
+        elif answer == 'e':
+            continue
+        else:
+            print("Vastaa joko k tai e!")
+
 
     # Jos käyttäjä yrittää alussa syöttää kirjaimia kun pyydetään numeroita, niin ilmoitetaan siitä.
     except ValueError:
