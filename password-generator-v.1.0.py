@@ -67,3 +67,7 @@ while True:
         if answer == 'e':
             print("Näkemiin!")
             break
+        elif answer == 'k':
+            continue
+        else:
+            print("Vastaa joko k tai e!")
