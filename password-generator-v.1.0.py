@@ -29,8 +29,8 @@ while True:
         # käyttäjän ei ole pakko käyttää erikoismerkkejä, mutta on suositeltavaa. Joka tapauksessa
         # tarjotaan mahdollisuutta käyttää tai olla käyttämättä.
         while True:
-            use_special_characters_response = input("Haluatko käyttää erikoismerkkejä salasanassa? Tämä on suositeltavaa, "
-                                               "ja nostaa tietoturvatasoa! (k/e): ")
+            use_special_characters_response = input("Haluatko käyttää erikoismerkkejä salasanassa? "
+                                                    "Tämä on suositeltavaa, ja nostaa tietoturvatasoa! (k/e): ")
             if use_special_characters_response in ('k', 'e'):
                 break
             else:
