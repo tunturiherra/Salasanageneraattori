@@ -1,117 +1,79 @@
-import json
-import datetime
-import os
+import string
+import secrets
+import clipboard
+import time
+from colorama import Fore, Style
 
+def generate_password(length, use_special_characters):
+    characters = string.ascii_letters + string.digits
+    if use_special_characters:
+        characters += string.punctuation
+    password = ''.join(secrets.choice(characters) for _ in range(length))
+    return password
 
-# muunnetaan tällä funktiolla Spotifylta tuleva aikaleima helpommin luettavaan muotoon
-def get_year(timestamp):
-    date_object = datetime.datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%SZ")
-    return date_object.year
+# Tervehditään käyttäjää ja odotetaan hetki
+print("Tervehdys! Olen salasanageneraattori, ja voin auttaa sinua luomaan uusia salasanoja.")
+time.sleep(2)
 
-
-def save_results_to_file(content, filename):
-    """Tallentaa annetun sisällön tiedostoon. Luo uuden tiedostonimen, jos tiedosto on jo olemassa."""
-    base_filename, extension = os.path.splitext(filename)
-    counter = 1
-    new_filename = filename
-
-    # jos tiedostonimi on jo olemassa niin luodaan uusi tiedostonimi numerolla varustettuna
-    while os.path.exists(new_filename):
-        new_filename = f"{base_filename}_{counter}{extension}"
-        counter += 1
-
-    with open(new_filename, 'w', encoding='utf-8') as f:
-        f.write(content)
-
-    print(f"Tulokset on tallennettu tiedostoon: {new_filename}")
-
-
+# Pyydetään pituus käyttäjältä, ja tässä vaiheessa tarkistetaan, jos käyttäjä yrittää syöttää kirjaimia
+# Aiemmin tästä seurasi katastrofi, ja ohjelma kaatui. Taklataan ongelma try:lla
 while True:
     try:
-        # Kysytään käyttäjältä kansion sijainti
-        folder_path = input("Anna kansion sijainti: \n").replace('"', "")
+        password_length = int(input("Toiveesi salasanan pituudelle? Pienin hyväksytty luku on 8!\n"))
+        if password_length < 8:
+            # Virheviesti ja muutos punaiseksi:
+            print(Fore.RED + "Salasana on liian lyhyt! Vahvassa salasanassa on vähintään 8 merkkiä.")
+            print(Style.RESET_ALL)
+            continue
 
-        # Listataan JSON-tiedostot kansiosta
-        print("Saatavilla olevat JSON-tiedostot:")
-        files = [f for f in os.listdir(folder_path) if f.endswith('.json')]
-        for i, file in enumerate(files, 1):
-            print(f"{i}. {file}")
-
-        # Kysytään käyttäjältä, mistä tiedostosta haetaan tiedot
-        file_index = int(input("Anna valitsemasi tiedoston numero: \n")) - 1
-        selected_file = os.path.join(folder_path, files[file_index])
-
-        # haetaan tiedot valitusta json-tiedostosta ja lisätään se omaksi muuttujaksi
-        with open(selected_file, 'r', encoding='utf-8') as file:
-            data = json.load(file)
-
+        # käyttäjän ei ole pakko käyttää erikoismerkkejä, mutta on suositeltavaa. Joka tapauksessa
+        # tarjotaan mahdollisuutta käyttää tai olla käyttämättä.
         while True:
-            try:
-                # kysytään käyttäjältä haluttua vuotta
-                listen_year = int(input("Anna haluttu vuosi, jonka perusteella haetaan striimatut laulut "
-                                        "(Luku 0 tulostaa kaikki vuodesta riippumatta.):\n").strip())
+            use_special_characters_response = input("Haluatko käyttää erikoismerkkejä salasanassa? "
+                                                    "Tämä on suositeltavaa, ja nostaa tietoturvatasoa! (k/e): ")
+            if use_special_characters_response in ('k', 'e'):
+                break
+            else:
+                print(Fore.RED + "Vastaa joko k tai e!")
+                print(Style.RESET_ALL)
+                continue
 
-                # jotta ohjelma ei tulostaisi miljoonaa kertaa virheviestiä, otetaan vain toteutuneet arvot.
-                found_songs = False
-                output = ""  # Tallennetaan tulokset tähän muuttujaan
+        if use_special_characters_response == 'k':
+            use_special_characters = True
+        elif use_special_characters_response == 'e':
+            use_special_characters = False
 
-                for song in data:
-                    # tarkistetaan ja tulostetaan tiedot vain, jos vuosi täsmää
-                    if get_year(song["ts"]) == listen_year or listen_year == 0:
-                        found_songs = True
-                        artist = song["master_metadata_album_artist_name"]
-                        track = song["master_metadata_track_name"]
-                        year = get_year(song["ts"])
-                        device = song["platform"]
+        # Tässä muodostetaan salasana huomioiden kuitenkin käyttäjän valinta erikoismerkkien suhteen
+        password = generate_password(password_length, use_special_characters)
+        print("Salasana luotu: {}".format(password))
+        # automaattinen kopiointi leikepöydälle
+        clipboard.copy(password)
 
-                        # tarkistetaan, että artistin ja kappaleen nimet eivät ole None
-                        if artist is None and track is None:
-                            continue
+        # Salasana luotu, ja valmis käytettäväksi
+        answer = input('Salasana kopioitu leikepöydälle. Paina Ctrl + V liittääksesi sen '
+                       'haluamaasi paikkaan. Lopetetaanko ohjelma? (k/e):').lower()
 
-                        # tallennetaan tulostettava rivi muuttujaan
-                        output += f"\n{artist}: {track}, kuunneltu vuonna {year} laitteelta {device}\n"
-
-                if not found_songs:
-                    print(f"Vuodelta {listen_year} ei löytynyt hakutuloksia.")
-                else:
-                    print(output)
-                    # kysytään käyttäjältä tallennetaanko tulokset tiedostoon
-                    save_to_file = input("Haluatko tallentaa tulokset tiedostoon? (k/e):\n").lower().strip()
-                    if save_to_file == "k":
-                        file_name = input("Anna tallennettavan tiedoston nimi (ilman tiedostopäätettä):\n").strip()
-                        save_results_to_file(output, file_name + ".txt")
-
-                # kysytään käyttäjältä haluaako hän hakea toisella vuodella samasta tiedostosta
-                another_year = input("Haluatko hakea toisella vuodella samasta tiedostosta? (k/e):\n").lower().strip()
-                if another_year == "k":
-                    continue
-                else:
-                    break
-
-            # jos käyttäjä ei syötä lukua.
-            except ValueError:
-                print("Et syöttänyt lukua.\n")
-
-        # annetaan käyttäjälle mahdollisuus hakea toisesta tiedostosta tietoja
-        restart = input("Haluatko hakea tietoja toisesta tiedostosta? (k/e):\n").lower().strip()
-        if restart == 'e':
+        # tässä vaiheessa kaiken pitäisi olla OK, joten kysytään lopetetaanko ohjelma.
+        if answer == 'k':
             print("Näkemiin!")
             break
-        elif restart == 'k':
+        elif answer == 'e':
             continue
         else:
             print("Vastaa joko k tai e!")
 
-    # ilmoitetaan käyttäjälle, että kansion tai tiedoston polku oli väärä
-    except (FileNotFoundError, OSError):
-        print("Kansiota tai tiedostoa ei löydy. Onhan polku varmasti oikein?")
+    # Jos käyttäjä yrittää alussa syöttää kirjaimia kun pyydetään numeroita, niin ilmoitetaan siitä.
+    except ValueError:
 
-    restart = input("Haluatko yrittää uudelleen? (k/e):\n").lower().strip()
+        # Virheviesti ja muutos punaiseksi:
+        print(Fore.RED + "Et syöttänyt numeroa! Anna jokin luku, joka on suurempi tai yhtä suuri kuin 8!")
+        print(Style.RESET_ALL)
 
-    if restart == 'e':
-        print("Näkemiin!")
-        break
-    elif restart == 'k':
-        continue
-    else:
-        print("Vastaa joko k tai e!")
+        answer = input('Aloitetaanko alusta? (k/e):').lower()
+        if answer == 'e':
+            print("Näkemiin!")
+            break
+        elif answer == 'k':
+            continue
+        else:
+            print("Vastaa joko k tai e!")
